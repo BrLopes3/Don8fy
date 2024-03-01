@@ -20,6 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textSize="20dp"
+        android:fontFamily="casual"
+        android:textStyle="bold"
         android:textColor="@color/blue"
         android:text="Wellcome to Don8ify App"/>
 

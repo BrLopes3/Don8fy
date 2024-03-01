@@ -6,46 +6,91 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_gravity="center"
+    android:layout_gravity="center_horizontal"
     >
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_margin="50dp"
+        android:src="@drawable/don8ifylogo"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign In"
+        android:textSize="30dp"
+        android:textColor="@color/blue"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hi There! Nice to see you again!"/>
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
-        android:text="E-mail"/>
+        android:textSize="20dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/blue"
+        android:textStyle="bold"
+        android:text="Email"/>
     <EditText
         android:layout_width="350dp"
         android:layout_height="wrap_content"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
+        android:textSize="20dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/blue"
+        android:textStyle="bold"
         android:text="Password"/>
     <EditText
         android:layout_width="350dp"
-
+        android:inputType="textPassword"
         android:layout_height="wrap_content"/>
 
     <Button
         android:id="@+id/login"
-        android:layout_width="250dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="40dp"
         android:backgroundTint="@color/blue"
-        android:textSize="30dp"
-        android:text="Log-In"/>
+        android:textSize="25dp"
+        app:cornerRadius="0dp"
+        android:text="Sign In"/>
 
-    <Button
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/blue"
-        android:textSize="30dp"
-        android:text="Sign-Up"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_gravity="fill"
+        android:layout_marginTop="25dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="130dp"
+            android:text="Forgot Password?"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Sign Up"
+            android:textColor="@color/blue"
+            android:textSize="15dp" />
+
+
+    </LinearLayout>
+
+
 
 
 </LinearLayout>
