@@ -22,7 +22,7 @@
         android:fontFamily="casual"
         android:textStyle="bold"
         android:textColor="@color/blue"
-        android:text="Wellcome to Don8ify App"/>
+        android:text="Welcome to Don8ify App"/>
 
 
 </LinearLayout>
