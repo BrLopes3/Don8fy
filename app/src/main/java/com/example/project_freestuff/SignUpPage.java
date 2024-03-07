@@ -2,6 +2,7 @@ package com.example.project_freestuff;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -26,6 +28,10 @@ public class SignUpPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_page);
+
+        // Inicialize o FirebaseApp
+        FirebaseApp.initializeApp(this);
+
 
         btnregister = findViewById(R.id.registerbtn);
         btnsignin = findViewById(R.id.signInbtn);
@@ -94,9 +100,10 @@ public class SignUpPage extends AppCompatActivity {
                             startActivity(intent);
                             finish();
                         }else{
-                            Toast.makeText(SignUpPage.this, "Signup Failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignUpPage.this, "Register Failed", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+
     }
 }
