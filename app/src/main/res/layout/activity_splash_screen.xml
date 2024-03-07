@@ -10,10 +10,9 @@
     >
 
     <ImageView
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:src="@drawable/don8ifylogo"
-        />
+        android:layout_width="283dp"
+        android:layout_height="327dp"
+        android:src="@drawable/don8ifylogo" />
 
     <TextView
         android:layout_width="wrap_content"
