@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class LoginPage extends AppCompatActivity {
     Button btnLogIn, btnSignUp;
@@ -45,10 +46,16 @@ public class LoginPage extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginPage.this, SignUpPage.class);
-                startActivity(intent);
+                Toast.makeText(LoginPage.this, "Clicou", Toast.LENGTH_SHORT).show();
+                openSignUp();
             }
         });
 
     }
+
+    public void openSignUp() {
+        Intent intent = new Intent(this, SignUpPage.class);
+        startActivity(intent);
+    }
 }
+
