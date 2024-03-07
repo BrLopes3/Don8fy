@@ -1,8 +1,5 @@
 package com.example.project_freestuff;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -11,11 +8,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-
 
 public class SignUpPage extends AppCompatActivity {
 
@@ -32,7 +31,7 @@ public class SignUpPage extends AppCompatActivity {
         btnsignin = findViewById(R.id.signInbtn);
         mAuth = FirebaseAuth.getInstance();
 
-        txtname = findViewById(R.id.usernametxt);
+        txtname = findViewById(R.id.fullnametxt);
         txtemail = findViewById(R.id.emailtxt);
         txtpassword = findViewById(R.id.passwordtxt);
         txtconfirmpassword = findViewById(R.id.confirmpasswordtxt);
@@ -48,6 +47,7 @@ public class SignUpPage extends AppCompatActivity {
         btnregister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 registerUser();
             }
         });
@@ -81,20 +81,20 @@ public class SignUpPage extends AppCompatActivity {
             return;
         }
 
-        mAuth.createUserWithEmailAndPassword(email, password)
+        mAuth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
+                        if (task.isSuccessful()){
                             Toast.makeText(SignUpPage.this,
                                     "Register Success :) ", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(SignUpPage.this, LoginPage.class);
-                            intent.putExtra("email", email);
-                            intent.putExtra("password", password);
+                            Intent intent = new Intent(SignUpPage.this,LoginPage.class);
+                            intent.putExtra("email",email);
+                            intent.putExtra("password",password);
                             startActivity(intent);
                             finish();
-                        } else {
-                            Toast.makeText(SignUpPage.this, "Failed", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(SignUpPage.this, "Signup Failed", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

@@ -26,7 +26,7 @@
         android:textSize="20dp"
         android:textStyle="bold" />
     <EditText
-        android:id="@+id/usernametxt"
+        android:id="@+id/fullnametxt"
         android:layout_width="350dp"
         android:hint="Your name"
         android:layout_height="wrap_content"/>
@@ -56,7 +56,7 @@
         android:textStyle="bold"
         android:text="Password"/>
     <EditText
-        android:id="@+id/confirmpasswordtxt"
+        android:id="@+id/passwordtxt"
         android:layout_width="350dp"
         android:inputType="textPassword"
         android:layout_height="wrap_content"/>
@@ -71,7 +71,7 @@
         android:text="Confirm Password"/>
 
     <EditText
-        android:id="@+id/passwordtxt"
+        android:id="@+id/confirmpasswordtxt"
         android:layout_width="350dp"
         android:inputType="textPassword"
         android:layout_height="wrap_content"/>
@@ -116,8 +116,5 @@
 
 
     </LinearLayout>
-
-
-
 
 </LinearLayout>
