@@ -1,0 +1,2 @@
+gradle/caches/8.4/generated-gradle-jars/gradle-api-8.4.jar filter=lfs diff=lfs merge=lfs -text
+gradle/caches/jars-9/o_9b0c6428be0a0d820729c02287b11b9a/app.jar filter=lfs diff=lfs merge=lfs -text

@@ -2,11 +2,13 @@ package com.example.project_freestuff;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,8 +23,11 @@ import com.google.firebase.auth.FirebaseAuth;
 public class SignUpPage extends AppCompatActivity {
 
     Button btnregister, btnsignin;
+    ImageButton btneye, btneye2;
     EditText txtname, txtemail, txtpassword, txtconfirmpassword;
     private FirebaseAuth mAuth;
+
+    boolean isPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +40,45 @@ public class SignUpPage extends AppCompatActivity {
 
         btnregister = findViewById(R.id.registerbtn);
         btnsignin = findViewById(R.id.signInbtn);
+        btneye = findViewById(R.id.eyebtn);
+        btneye2 = findViewById(R.id.eyebtn2);
+
         mAuth = FirebaseAuth.getInstance();
 
         txtname = findViewById(R.id.fullnametxt);
         txtemail = findViewById(R.id.emailtxt);
         txtpassword = findViewById(R.id.passwordtxt);
         txtconfirmpassword = findViewById(R.id.confirmpasswordtxt);
+
+
+        //configurate the toggle button to see the password
+        btneye.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isPasswordVisible){
+                    txtpassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    btneye.setImageResource(R.drawable.eyeopen);
+                }else{
+                    txtpassword.setTransformationMethod(null);
+                    btneye.setImageResource(R.drawable.eyeclosed);
+                }
+                isPasswordVisible = !isPasswordVisible;
+            }
+        });
+
+        btneye2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isPasswordVisible){
+                    txtconfirmpassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    btneye2.setImageResource(R.drawable.eyeopen);
+                }else{
+                    txtconfirmpassword.setTransformationMethod(null);
+                    btneye2.setImageResource(R.drawable.eyeclosed);
+                }
+                isPasswordVisible = !isPasswordVisible;
+            }
+        });
 
         btnsignin.setOnClickListener(new View.OnClickListener() {
             @Override

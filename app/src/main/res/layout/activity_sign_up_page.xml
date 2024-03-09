@@ -55,11 +55,27 @@
         android:textColor="@color/blue"
         android:textStyle="bold"
         android:text="Password"/>
-    <EditText
-        android:id="@+id/passwordtxt"
-        android:layout_width="350dp"
-        android:inputType="textPassword"
-        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/passwordtxt"
+            android:layout_width="300dp"
+            android:inputType="textPassword"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:id="@+id/eyebtn"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            android:src="@drawable/eyeopen" />
+
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -70,11 +86,26 @@
         android:textStyle="bold"
         android:text="Confirm Password"/>
 
-    <EditText
-        android:id="@+id/confirmpasswordtxt"
-        android:layout_width="350dp"
-        android:inputType="textPassword"
-        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/confirmpasswordtxt"
+            android:layout_width="300dp"
+            android:inputType="textPassword"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:id="@+id/eyebtn2"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            android:src="@drawable/eyeopen" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/registerbtn"

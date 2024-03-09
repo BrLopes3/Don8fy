@@ -4,15 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 public class LoginPage extends AppCompatActivity {
     Button btnLogIn, btnSignUp;
 
     EditText email, password;
+    ImageButton btnEye;
+
+    boolean isPasswordVisible = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,6 +25,7 @@ public class LoginPage extends AppCompatActivity {
 
         btnLogIn = findViewById(R.id.login);
         btnSignUp = findViewById(R.id.signUpbtn);
+        btnEye = findViewById(R.id.eyebtn);
         email = findViewById(R.id.emailtxt);
         password = findViewById(R.id.passwordtxt);
 
@@ -32,6 +38,21 @@ public class LoginPage extends AppCompatActivity {
             email.setText(usermail);
             password.setText(userpassword);
         }
+
+        //configurate the toggle button to see the password
+        btnEye.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isPasswordVisible){
+                    password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    btnEye.setImageResource(R.drawable.eyeopen);
+                }else{
+                    password.setTransformationMethod(null);
+                    btnEye.setImageResource(R.drawable.eyeclosed);
+                }
+                isPasswordVisible = !isPasswordVisible;
+            }
+        });
 
 
 
