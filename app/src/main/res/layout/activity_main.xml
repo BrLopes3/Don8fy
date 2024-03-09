@@ -1,36 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_account"
+        android:layout_marginTop="15dp"
+        android:padding="10dp"/>
+
+    <ImageView
+        android:id="@+id/addItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="350dp"
+        android:padding="10dp"/>
+
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="MAIN PAGE"/>
+        android:layout_height="wrap_content"
+        android:text="Don8fy"
+        android:textStyle="bold"
+        android:textColor="@color/blue"
+        android:textSize="40sp"
+        android:textAlignment="center"
+        android:layout_marginTop="80dp"
+        />
 
+
+    <EditText
+        android:id="@+id/txtSearch"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:layout_marginLeft="50dp"
+        android:hint="  Search"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintEnd_toStartOf="@id/imageViewSearch"
+     />
+
+    <ImageView
+        android:id="@+id/imageViewSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_search"
+        android:layout_marginTop="150dp"
+        android:layout_marginLeft="50dp"
+        app:layout_constraintBottom_toBottomOf="@id/txtSearch"
+        android:padding="8dp"/>
+
+    <ImageView
+        android:id="@+id/filter"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_filter"
+        android:layout_marginTop="130dp"
+        android:layout_marginLeft="340dp"
+        android:padding="10dp"/>
 
     <GridLayout
+        android:id="@+id/gridLayoutProducts"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:columnCount="2"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
+        android:alignmentMode="alignMargins"
+        android:columnOrderPreserved="false"
+        android:layout_below="@id/txtSearch"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
 
-        <ListView
-            android:id="@+id/listv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
+        <!-- Item do GridLayout -->
+        <include layout="@layout/grid_item_layout" />
+        <include layout="@layout/grid_item_layout" />
+        <!-- Adicione quantos itens desejar -->
 
     </GridLayout>
 
 
-
-
-
-</LinearLayout>
+</RelativeLayout>
