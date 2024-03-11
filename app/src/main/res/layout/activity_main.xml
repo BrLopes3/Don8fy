@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context=".MainActivity">
 
     <ImageView
@@ -71,17 +72,17 @@
 
     <GridLayout
         android:id="@+id/gridLayoutProducts"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:columnCount="2"
         android:alignmentMode="alignMargins"
         android:columnOrderPreserved="false"
+        android:layout_centerHorizontal="true"
         android:layout_below="@id/txtSearch"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp">
+        android:layout_marginTop="16dp">
 
         <!-- Item do GridLayout -->
+        <include layout="@layout/grid_item_layout" />
         <include layout="@layout/grid_item_layout" />
         <include layout="@layout/grid_item_layout" />
         <!-- Adicione quantos itens desejar -->
