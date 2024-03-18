@@ -65,7 +65,7 @@ public class NewItemPage extends AppCompatActivity {
 
                String itemName = productName.getText().toString();
                String itemDescription = productDescription.getText().toString();
-               //ImageView itemPicture = productImage;
+               String imageData = productImage.toString();
 
                if (itemName.isEmpty() || itemDescription.isEmpty() || productImage.getDrawable() == null){
                    Toast.makeText(NewItemPage.this, "Please, fill all fields", Toast.LENGTH_SHORT).show();
@@ -74,18 +74,11 @@ public class NewItemPage extends AppCompatActivity {
                    DatabaseReference newItemRef = reference.push();
                    String itemId = newItemRef.getKey().toString();
 
-//                   Bitmap itemPicture = ((BitmapDrawable) productImage.getDrawable()).getBitmap();
-//
-//                   ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                   itemPicture.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                   byte[] imageData = baos.toByteArray();
-
-                   ItemModel item = new ItemModel(itemName, itemDescription, itemId);
+                   ItemModel item = new ItemModel(itemName, itemDescription, itemId, imageData);
                    String message = "New item created: "+itemId;
                    Toast.makeText(NewItemPage.this, message, Toast.LENGTH_SHORT).show();
 
                    reference.child(itemId).setValue(item);
-
 
                    Toast.makeText(NewItemPage.this, "Success",Toast.LENGTH_SHORT).show();
 
