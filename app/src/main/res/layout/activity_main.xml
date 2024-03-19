@@ -68,9 +68,10 @@
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_filter"
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="150dp"
         android:layout_marginLeft="340dp"
-        android:padding="10dp"/>
+        android:padding="10dp"
+        app:tint="@color/blue" />
 
     <GridLayout
         android:id="@+id/gridLayoutProducts"
