@@ -1,95 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:id="@+id/drawer_layout"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/account"
+    <com.google.android.material.navigation.NavigationView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_account"
-        android:layout_marginTop="15dp"
-        android:padding="10dp"/>
+        android:layout_height="match_parent"
+        app:headerLayout="@layout/header"
+        app:menu="@menu/main_menu"
+        android:id="@+id/nav_view"
+        android:layout_gravity="start"/>
 
-    <ImageButton
-        android:id="@+id/addItem"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:backgroundTint="@color/white"
-        android:src="@drawable/ic_add"
-        android:scaleType="fitCenter"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="350dp"
-        android:padding="0dp"/>
-
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Don8fy"
-        android:textStyle="bold"
-        android:textColor="@color/blue"
-        android:textSize="40sp"
-        android:textAlignment="center"
-        android:layout_marginTop="80dp"
-        />
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_account"
+            android:layout_marginTop="15dp"
+            android:padding="10dp"/>
+
+        <ImageButton
+            android:id="@+id/addItem"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="350dp"
+            android:layout_marginTop="15dp"
+            android:backgroundTint="@color/white"
+            android:padding="0dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_add" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textStyle="bold"
+            android:textColor="@color/blue"
+            android:textSize="40sp"
+            android:textAlignment="center"
+            android:layout_marginTop="80dp"
+            />
 
 
-    <EditText
-        android:id="@+id/txtSearch"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
-        android:layout_marginLeft="50dp"
-        android:hint="  Search"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        app:layout_constraintEnd_toStartOf="@id/imageViewSearch"
-     />
+        <EditText
+            android:id="@+id/txtSearch"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="150dp"
+            android:layout_marginStart="50dp"
+            android:hint="  Search"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintEnd_toStartOf="@id/imageViewSearch"
+            />
 
-    <ImageView
-        android:id="@+id/imageViewSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_search"
-        android:layout_marginTop="150dp"
-        android:layout_marginLeft="50dp"
-        app:layout_constraintBottom_toBottomOf="@id/txtSearch"
-        android:padding="8dp"/>
+        <ImageView
+            android:id="@+id/imageViewSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_search"
+            android:layout_marginTop="150dp"
+            android:layout_marginStart="50dp"
+            app:layout_constraintBottom_toBottomOf="@id/txtSearch"
+            android:padding="8dp"/>
 
-    <ImageView
-        android:id="@+id/filter"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_filter"
-        android:layout_marginTop="130dp"
-        android:layout_marginLeft="340dp"
-        android:padding="10dp"/>
+        <ImageView
+            android:id="@+id/filter"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_filter"
+            android:layout_marginTop="150dp"
+            android:layout_marginStart="340dp"
+            android:padding="10dp"
+            app:tint="@color/blue" />
 
-    <GridLayout
-        android:id="@+id/gridLayoutProducts"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:columnCount="2"
-        android:alignmentMode="alignMargins"
-        android:columnOrderPreserved="false"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/txtSearch"
-        android:layout_marginTop="16dp">
+        <GridLayout
+            android:id="@+id/gridLayoutProducts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/txtSearch"
+            android:layout_marginTop="16dp">
 
-        <!-- Item do GridLayout -->
-        <include layout="@layout/grid_item_layout" />
-        <include layout="@layout/grid_item_layout" />
-        <include layout="@layout/grid_item_layout" />
-        <!-- Adicione quantos itens desejar -->
+            <!-- Item do GridLayout -->
+            <include layout="@layout/grid_item_layout" />
+            <include layout="@layout/grid_item_layout" />
+            <include layout="@layout/grid_item_layout" />
+            <!-- Adicione quantos itens desejar -->
 
-    </GridLayout>
+        </GridLayout>
 
 
-</RelativeLayout>
+    </RelativeLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>

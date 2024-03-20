@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">project_freeStuff</string>
+    <string name="app_name">Don8fy</string>
+    <string name="open">Open Navigation Drawer</string>
+    <string name="close">Close Navigation Drawer</string>
 </resources>
