@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center"
     android:layout_margin="20dp"
     android:orientation="vertical">
@@ -9,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add a new Item available for donation:"
+        android:text="Add a new item available for donation:"
         android:textAlignment="center"
         android:textSize="20dp"/>
 
@@ -21,7 +22,8 @@
         android:scaleType="centerCrop"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="25dp"
-        android:src="@drawable/ic_add" />
+        android:src="@drawable/ic_add_photo"
+        app:tint="@color/blue" />
 
     <Button
         android:id="@+id/btnTakePhoto"

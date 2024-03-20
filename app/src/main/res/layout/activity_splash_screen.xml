@@ -12,7 +12,7 @@
     <ImageView
         android:layout_width="283dp"
         android:layout_height="327dp"
-        android:src="@drawable/don8ifylogo" />
+        android:src="@drawable/don8fylogo" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
         android:fontFamily="casual"
         android:textStyle="bold"
         android:textColor="@color/blue"
-        android:text="Welcome to Don8ify App"/>
+        android:text="Welcome to Don8fy App"/>
 
 
 </LinearLayout>
