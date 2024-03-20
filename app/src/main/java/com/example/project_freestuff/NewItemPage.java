@@ -65,6 +65,8 @@ public class NewItemPage extends AppCompatActivity {
 
                String itemName = productName.getText().toString();
                String itemDescription = productDescription.getText().toString();
+
+               //verify how to get the image back based on the imageData
                String imageData = productImage.toString();
 
                if (itemName.isEmpty() || itemDescription.isEmpty() || productImage.getDrawable() == null){
