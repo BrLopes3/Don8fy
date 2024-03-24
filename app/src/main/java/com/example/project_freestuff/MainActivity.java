@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        gridProducts = findViewById(R.id.gridLayoutProducts);
+        gridProducts = findViewById(R.id.gridProducts);
         addBtn = findViewById(R.id.addItem);
 
         drawerLayout = findViewById(R.id.drawer_layout);

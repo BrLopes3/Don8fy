@@ -87,7 +87,7 @@
             app:tint="@color/blue" />
 
         <GridLayout
-            android:id="@+id/gridLayoutProducts"
+            android:id="@+id/gridProducts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:columnCount="2"
