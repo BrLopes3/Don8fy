@@ -33,12 +33,10 @@ import java.io.ByteArrayOutputStream;
 
 public class NewItemPage extends AppCompatActivity {
 
-    private static final int REQUEST_CODE = 1;
-    private ImageView imageProduct;
+    private static final int REQUEST_CODE = 22;
     Button takePhoto, saveItem;
     ImageView productImage;
     EditText productName, productDescription;
-
     FirebaseDatabase mydatabase;
     DatabaseReference reference;
 
@@ -65,33 +63,18 @@ public class NewItemPage extends AppCompatActivity {
        saveItem.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               mydatabase = FirebaseDatabase.getInstance();
-               reference = mydatabase.getReference("items");
-
-               //save the picture on Firebase Storage and get the Image URL
-
 
                String itemName = productName.getText().toString();
                String itemDescription = productDescription.getText().toString();
+               Bitmap photo = ((BitmapDrawable) productImage.getDrawable()).getBitmap();
+               Uri imageUri = getImageUri(getApplicationContext(), photo);
 
-               // change the sentence bellow to Use the image URL as imageData
-               String imageData = productImage.toString();
-
-               if (itemName.isEmpty() || itemDescription.isEmpty() || productImage.getDrawable() == null){
+               if (itemName.isEmpty() || itemDescription.isEmpty() || productImage == null){
                    Toast.makeText(NewItemPage.this, "Please, fill all fields", Toast.LENGTH_SHORT).show();
                    return;
                }else{
-                   DatabaseReference newItemRef = reference.push();
-                   String itemId = newItemRef.getKey().toString();
-
-                   ItemModel item = new ItemModel(itemName, itemDescription, itemId, imageData);
-                   String message = "New item created: "+itemId;
-                   Toast.makeText(NewItemPage.this, message, Toast.LENGTH_SHORT).show();
-
-                   reference.child(itemId).setValue(item);
-
-                   Toast.makeText(NewItemPage.this, "Success",Toast.LENGTH_SHORT).show();
-
+                       // Upload the image to Firebase Storage
+                       uploadImageToFirebaseStorage(imageUri, itemName, itemDescription);
                }
            }
        });
@@ -105,19 +88,13 @@ public class NewItemPage extends AppCompatActivity {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             productImage.setImageBitmap(photo);
 
-            // Convert the Bitmap to a Uri
-            Uri imageUri = getImageUri(getApplicationContext(), photo);
-
-            // Upload the image to Firebase Storage
-            uploadImageToFirebaseStorage(imageUri);
-
         }else{
-            Toast.makeText(this, "Photo Error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(NewItemPage.this, "Photo Error", Toast.LENGTH_SHORT).show();
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    private void uploadImageToFirebaseStorage(Uri imageUri){
+    private void uploadImageToFirebaseStorage(Uri imageUri, String itemName, String itemDescription){
         StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images");
         // Create a unique filename
         String imageName = "image" + System.currentTimeMillis() + ".jpg";
@@ -129,7 +106,8 @@ public class NewItemPage extends AppCompatActivity {
             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 // Use the image URL as imageData
                 String imageUrl = uri.toString();
-                saveItemToFirebaseDatabase(imageUrl);
+                saveItemToFirebaseDatabase(itemName, itemDescription, imageUrl);
+                Toast.makeText(NewItemPage.this, "Image uploaded", Toast.LENGTH_SHORT).show();
             }).addOnFailureListener(e -> {
                 Toast.makeText(NewItemPage.this, "Failed to get image URL", Toast.LENGTH_SHORT).show();
             });
@@ -139,34 +117,24 @@ public class NewItemPage extends AppCompatActivity {
 
     }
 
-    private void saveItemToFirebaseDatabase(String imageUrl){
+    private void saveItemToFirebaseDatabase(String itemName, String itemDescription, String imageUrl) {
 
-        // Retrieve other item information
-        String itemName = productName.getText().toString();
-        String itemDescription = productDescription.getText().toString();
+        // Initialize Firebase database and reference
+        mydatabase = FirebaseDatabase.getInstance();
+        reference = mydatabase.getReference("items");
 
-        // Check if fields are empty
-        if (itemName.isEmpty() || itemDescription.isEmpty() || productImage.getDrawable() == null){
-            Toast.makeText(NewItemPage.this, "Please, fill all fields", Toast.LENGTH_SHORT).show();
-            return;
-        } else {
-            // Initialize Firebase database and reference
-            mydatabase = FirebaseDatabase.getInstance();
-            reference = mydatabase.getReference("items");
+        // Push a new item to the database
+        DatabaseReference newItemRef = reference.push();
+        String itemId = newItemRef.getKey();
 
-            // Push a new item to the database
-            DatabaseReference newItemRef = reference.push();
-            String itemId = newItemRef.getKey();
+        // Create an ItemModel object
+        ItemModel item = new ItemModel(itemName, itemDescription, itemId, imageUrl);
 
-            // Create an ItemModel object
-            ItemModel item = new ItemModel(itemName, itemDescription, itemId, imageUrl);
+        // Save item to Firebase database
+        reference.child(itemId).setValue(item);
 
-            // Save item to Firebase database
-            reference.child(itemId).setValue(item);
-
-            // Display success message
-            Toast.makeText(NewItemPage.this, "Item saved successfully",Toast.LENGTH_SHORT).show();
-        }
+        // Display success message
+        Toast.makeText(NewItemPage.this, "Item saved successfully", Toast.LENGTH_SHORT).show();
 
     }
 
