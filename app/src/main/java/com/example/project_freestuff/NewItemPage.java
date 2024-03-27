@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -48,6 +49,7 @@ public class NewItemPage extends AppCompatActivity {
     ImageView productImage;
     EditText name, description;
     Button takePhoto, saveItem;
+    Uri imageUri, imageUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,7 @@ public class NewItemPage extends AppCompatActivity {
         description = findViewById(R.id.productDescription);
         takePhoto = findViewById(R.id.btnTakePhoto);
         saveItem = findViewById(R.id.btnSave);
+
 
         //request for camera runtime permission
         if(ContextCompat.checkSelfPermission(NewItemPage.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
@@ -75,6 +78,14 @@ public class NewItemPage extends AppCompatActivity {
             }
         });
 
+        saveItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //function to upload the image into the Firebase Storage
+                uploadImage(productImage);
+            }
+        });
+
     }
 
     @Override
@@ -84,5 +95,45 @@ public class NewItemPage extends AppCompatActivity {
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             productImage.setImageBitmap(bitmap);
         }
+    }
+
+    private void uploadImage(ImageView image){
+        //Get the Bitmap from the ImageView
+        BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
+        if (drawable == null){
+            Toast.makeText(NewItemPage.this, "No Image Uploaded", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Bitmap bitmap = drawable.getBitmap();
+
+        //convert Bitmap into an Uri using a function
+        imageUri = getImageUri(bitmap);
+
+        //Upload the image to Firebase Storage
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imageRef = storageRef.child("images/"+UUID.randomUUID().toString());
+
+        imageRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(NewItemPage.this, "Image Uploaded Successfully!", Toast.LENGTH_SHORT).show();
+
+                //Get the Url of the image
+                imageUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(NewItemPage.this, "Fail on Upload Image", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private Uri getImageUri(Bitmap bitmap) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Image", null);
+        return Uri.parse(path);
     }
 }
