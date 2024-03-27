@@ -2,23 +2,23 @@ package com.example.project_freestuff;
 
 import android.content.ClipData;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.widget.ImageView;
 
 //class for the item added
 public class ItemModel {
 
-  String name, description, itemId, imageData;
+  String name, description, imageUri;
 
 
   //constructor
-  public ItemModel(String n, String d, String id, String img){
-      name = n;
-      description = d;
-      itemId = id;
-      imageData = img;
-  }
-  //getters and setters
+    public ItemModel(String name, String description, String imageUri) {
+        this.name = name;
+        this.description = description;
+        this.imageUri = imageUri;
+    }
 
+    //getters and setters
     public String getName() {
         return name;
     }
@@ -27,23 +27,19 @@ public class ItemModel {
         return description;
     }
 
-    public String getImageData() {
-        return imageData;
-    }
-
-    public String getItemId() {
-        return itemId;
+    public String getImageUri() {
+        return imageUri;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setDescription(String desctiption) {
-        this.description = desctiption;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public void setImageData(String imgData) {
-        imageData = imgData;
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
     }
 }

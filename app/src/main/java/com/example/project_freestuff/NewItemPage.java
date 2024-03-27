@@ -1,6 +1,7 @@
 package com.example.project_freestuff;
 
 import android.Manifest;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -83,6 +85,7 @@ public class NewItemPage extends AppCompatActivity {
             public void onClick(View v) {
                 //function to upload the image into the Firebase Storage
                 uploadImage(productImage);
+
             }
         });
 
@@ -118,8 +121,21 @@ public class NewItemPage extends AppCompatActivity {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(NewItemPage.this, "Image Uploaded Successfully!", Toast.LENGTH_SHORT).show();
 
-                //Get the Url of the image
-                imageUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult();
+                //Get the Url of the uploaded image
+                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String itemName = name.getText().toString();
+                        String itemDescription = description.getText().toString();
+                        String uriImage = uri.toString();
+                        uploadItem(itemName, itemDescription, uriImage);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(NewItemPage.this, "Failed to retrieve image URL", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -127,6 +143,34 @@ public class NewItemPage extends AppCompatActivity {
                 Toast.makeText(NewItemPage.this, "Fail on Upload Image", Toast.LENGTH_SHORT).show();
             }
         });
+
+    }
+
+    private void uploadItem(String name, String description, String imageUrl){
+
+        //Initialize Firebase RealTime Database
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("items");
+
+        //upload the itemModel object to the Database
+        String itemId = databaseRef.push().getKey(); //generate a unique ID for the item
+        if (itemId != null){
+            //instantiate the ItemModel class
+            ItemModel itemModel = new ItemModel(name, description, imageUrl);
+            databaseRef.child(itemId).setValue(itemModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Toast.makeText(NewItemPage.this, "New Item Saved!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(NewItemPage.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(NewItemPage.this, "Error: New Item NOT Saved!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
     }
 
