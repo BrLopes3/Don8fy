@@ -51,7 +51,7 @@ public class NewItemPage extends AppCompatActivity {
     ImageView productImage;
     EditText name, description;
     Button takePhoto, saveItem;
-    Uri imageUri, imageUrl;
+    Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
