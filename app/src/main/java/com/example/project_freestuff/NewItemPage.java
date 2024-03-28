@@ -1,11 +1,16 @@
 package com.example.project_freestuff;
 
+import android.Manifest;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,132 +22,162 @@ import android.net.Uri;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
+import java.util.UUID;
 
 public class NewItemPage extends AppCompatActivity {
 
-    private static final int REQUEST_CODE = 22;
-    Button takePhoto, saveItem;
     ImageView productImage;
-    EditText productName, productDescription;
-    FirebaseDatabase mydatabase;
-    DatabaseReference reference;
+    EditText name, description;
+    Button takePhoto, saveItem;
+    Uri imageUri;
 
-    private ActivityResultLauncher<Intent> cameraLauncher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_item_page);
 
         productImage = findViewById(R.id.imageProduct);
+        name = findViewById(R.id.productName);
+        description = findViewById(R.id.productDescription);
         takePhoto = findViewById(R.id.btnTakePhoto);
         saveItem = findViewById(R.id.btnSave);
-        productName = findViewById(R.id.productName);
-        productDescription = findViewById(R.id.productDescription);
-
-       takePhoto.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-               startActivityForResult(cameraIntent, REQUEST_CODE);
-           }
-       });
-
-       saveItem.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-
-               String itemName = productName.getText().toString();
-               String itemDescription = productDescription.getText().toString();
-               Bitmap photo = ((BitmapDrawable) productImage.getDrawable()).getBitmap();
-               Uri imageUri = getImageUri(getApplicationContext(), photo);
-
-               if (itemName.isEmpty() || itemDescription.isEmpty() || productImage == null){
-                   Toast.makeText(NewItemPage.this, "Please, fill all fields", Toast.LENGTH_SHORT).show();
-                   return;
-               }else{
-                       // Upload the image to Firebase Storage
-                       uploadImageToFirebaseStorage(imageUri, itemName, itemDescription);
-               }
-           }
-       });
-
-    }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK){
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            productImage.setImageBitmap(photo);
-
-        }else{
-            Toast.makeText(NewItemPage.this, "Photo Error", Toast.LENGTH_SHORT).show();
-            super.onActivityResult(requestCode, resultCode, data);
+        //request for camera runtime permission
+        if(ContextCompat.checkSelfPermission(NewItemPage.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(NewItemPage.this, new String[]{
+                    Manifest.permission.CAMERA
+            }, 100);
         }
-    }
 
-    private void uploadImageToFirebaseStorage(Uri imageUri, String itemName, String itemDescription){
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images");
-        // Create a unique filename
-        String imageName = "image" + System.currentTimeMillis() + ".jpg";
-        StorageReference imageRef = storageRef.child(imageName);
+        takePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, 100);
+            }
+        });
 
-        //upload image to the Firebase Storage
-        imageRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
-            // Image uploaded successfully, get the download URL
-            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                // Use the image URL as imageData
-                String imageUrl = uri.toString();
-                saveItemToFirebaseDatabase(itemName, itemDescription, imageUrl);
-                Toast.makeText(NewItemPage.this, "Image uploaded", Toast.LENGTH_SHORT).show();
-            }).addOnFailureListener(e -> {
-                Toast.makeText(NewItemPage.this, "Failed to get image URL", Toast.LENGTH_SHORT).show();
-            });
-            }).addOnFailureListener(e -> {
-            Toast.makeText(NewItemPage.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
+        saveItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //function to upload the image into the Firebase Storage
+                uploadImage(productImage);
+
+            }
         });
 
     }
 
-    private void saveItemToFirebaseDatabase(String itemName, String itemDescription, String imageUrl) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 100){
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            productImage.setImageBitmap(bitmap);
+        }
+    }
 
-        // Initialize Firebase database and reference
-        mydatabase = FirebaseDatabase.getInstance();
-        reference = mydatabase.getReference("items");
+    private void uploadImage(ImageView image){
+        //Get the Bitmap from the ImageView
+        BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
+        if (drawable == null){
+            Toast.makeText(NewItemPage.this, "No Image Uploaded", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Bitmap bitmap = drawable.getBitmap();
 
-        // Push a new item to the database
-        DatabaseReference newItemRef = reference.push();
-        String itemId = newItemRef.getKey();
+        //convert Bitmap into an Uri using a function
+        imageUri = getImageUri(bitmap);
 
-        // Create an ItemModel object
-        ItemModel item = new ItemModel(itemName, itemDescription, itemId, imageUrl);
+        //Upload the image to Firebase Storage
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imageRef = storageRef.child("images/"+UUID.randomUUID().toString());
 
-        // Save item to Firebase database
-        reference.child(itemId).setValue(item);
+        imageRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(NewItemPage.this, "Image Uploaded Successfully!", Toast.LENGTH_SHORT).show();
 
-        // Display success message
-        Toast.makeText(NewItemPage.this, "Item saved successfully", Toast.LENGTH_SHORT).show();
+                //Get the Url of the uploaded image
+                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String itemName = name.getText().toString();
+                        String itemDescription = description.getText().toString();
+                        String uriImage = uri.toString();
+                        uploadItem(itemName, itemDescription, uriImage);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(NewItemPage.this, "Failed to retrieve image URL", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(NewItemPage.this, "Fail on Upload Image", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
-    // Method to convert Bitmap to Uri
-    private Uri getImageUri(Context context, Bitmap bitmap) {
+    private void uploadItem(String name, String description, String imageUrl){
+
+        //Initialize Firebase RealTime Database
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("items");
+
+        //upload the itemModel object to the Database
+        String itemId = databaseRef.push().getKey(); //generate a unique ID for the item
+        if (itemId != null){
+            //instantiate the ItemModel class
+            ItemModel itemModel = new ItemModel(name, description, imageUrl);
+            databaseRef.child(itemId).setValue(itemModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Toast.makeText(NewItemPage.this, "New Item Saved!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(NewItemPage.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(NewItemPage.this, "Error: New Item NOT Saved!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+    }
+
+    private Uri getImageUri(Bitmap bitmap) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, "Title", null);
+        String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Image", null);
         return Uri.parse(path);
     }
 }
