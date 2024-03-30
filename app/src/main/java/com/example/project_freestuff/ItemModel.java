@@ -12,6 +12,10 @@ public class ItemModel {
 
 
   //constructor
+
+    public ItemModel() {
+    }
+
     public ItemModel(String name, String description, String imageUri) {
         this.name = name;
         this.description = description;
