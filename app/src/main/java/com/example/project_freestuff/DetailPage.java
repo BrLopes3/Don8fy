@@ -3,7 +3,9 @@ package com.example.project_freestuff;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -53,10 +55,15 @@ public class DetailPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(DetailPage.this, EditItemPage.class);
-                startActivity(intent);
-                intent.putExtra("name", productName.toString());
-                intent.putExtra("description", productDescription.toString());
 
+                //send the item informations to the EditPage
+                intent.putExtra("name", productName.getText().toString());
+                Log.d("intentName", "nameTodisplay: " + productName);
+                intent.putExtra("description", productDescription.getText().toString());
+                intent.putExtra("imageUrl", imageUri);
+
+                startActivity(intent);
+                finish();
             }
         });
 
