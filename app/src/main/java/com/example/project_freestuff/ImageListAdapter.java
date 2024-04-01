@@ -6,8 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +31,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
     Context context;
     ArrayList<ItemModel> arrayList;
 
-    AdapterView.OnItemClickListener onItemClickListener;
+    onItemClickListener listener;
 
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
@@ -65,6 +63,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        position = holder.getAdapterPosition();
         ItemModel item = arrayList.get(position);
         holder.title.setText(item.getName());
         Log.d("ImageAdapter", "Image URI to download: " + item.getImageUri());
@@ -77,6 +76,17 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
             // Use a placeholder image while loading
             Glide.with(context).load(R.drawable.androidicon).into(holder.imageView);
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            int position = holder.getAdapterPosition();
+            @Override
+            public void onClick(View v) {
+                ItemModel itemSelected = arrayList.get(position);
+                if(listener != null){
+                    listener.onItemClick(itemSelected);
+                }
+            }
+        });
 
     }
 
@@ -136,12 +146,14 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
         });
     }
 
-    public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener){
-        this.onItemClickListener = onItemClickListener;
+    public void setOnItemClickListener(onItemClickListener listener){
+        this.listener = listener;
     }
 
     public interface onItemClickListener{
         void onItemClick(ItemModel item);
     }
+
+
 
 }

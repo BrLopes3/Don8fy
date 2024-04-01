@@ -66,6 +66,19 @@ public class MainActivity extends AppCompatActivity {
         // Retrieve items from Firebase
         adapter.getItems();
 
+        adapter.setOnItemClickListener(new ImageListAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(ItemModel item) {
+                // Open DetailActivity with item details
+                Intent intent = new Intent(MainActivity.this, DetailPage.class);
+                intent.putExtra("name", item.name);  // Pass item object to DetailPage
+                intent.putExtra("description", item.description);
+                intent.putExtra("url", item.imageUri);
+                startActivity(intent);
+                finish();
+            }
+        });
+
 
 
 
