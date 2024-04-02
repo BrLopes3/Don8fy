@@ -1,5 +1,6 @@
 package com.example.project_freestuff;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -12,13 +13,20 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class LoginPage extends AppCompatActivity {
     Button btnLogIn, btnSignUp;
 
     EditText email, password;
     ImageButton btnEye;
-
     boolean isPasswordVisible = false;
+
+    private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +37,7 @@ public class LoginPage extends AppCompatActivity {
         btnEye = findViewById(R.id.eyebtn);
         email = findViewById(R.id.emailtxt);
         password = findViewById(R.id.passwordtxt);
+        mAuth =  FirebaseAuth.getInstance();
 
         //Retrieve email and password from the signup page
         Bundle extras = getIntent().getExtras();
@@ -60,9 +69,7 @@ public class LoginPage extends AppCompatActivity {
         btnLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("Debug", "Button clicked"); // Adicione este log
-                Intent intent = new Intent(LoginPage.this, MainActivity.class);
-                startActivity(intent);
+                loginUser();
             }
         });
 
@@ -73,6 +80,32 @@ public class LoginPage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+    }
+
+
+    private void loginUser() {
+        String userEmail = email.getText().toString().trim();
+        String userPassword = password.getText().toString().trim();
+
+        if(userEmail.isEmpty() || userPassword.isEmpty()){
+            Toast.makeText(LoginPage.this, "all fields must be filled", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mAuth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(LoginPage.this, "Login Successfull",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LoginPage.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }else{
+                    Toast.makeText(LoginPage.this, "Login Failed",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
     }
 }
