@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("name", item.name);  // Pass item object to DetailPage
                 intent.putExtra("description", item.description);
                 intent.putExtra("url", item.imageUri);
+                intent.putExtra("itemId", item.itemId);
                 startActivity(intent);
                 finish();
             }

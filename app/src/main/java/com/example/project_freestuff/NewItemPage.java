@@ -155,7 +155,7 @@ public class NewItemPage extends AppCompatActivity {
         String itemId = databaseRef.push().getKey(); //generate a unique ID for the item
         if (itemId != null){
             //instantiate the ItemModel class
-            ItemModel itemModel = new ItemModel(name, description, imageUrl);
+            ItemModel itemModel = new ItemModel(itemId, name, description, imageUrl);
             databaseRef.child(itemId).setValue(itemModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void unused) {

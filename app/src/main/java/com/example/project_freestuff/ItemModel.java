@@ -8,7 +8,7 @@ import android.widget.ImageView;
 //class for the item added
 public class ItemModel {
 
-  String name, description, imageUri;
+  String itemId, name, description, imageUri;
 
 
   //constructor
@@ -16,13 +16,19 @@ public class ItemModel {
     public ItemModel() {
     }
 
-    public ItemModel(String name, String description, String imageUri) {
+    public ItemModel(String itemId, String name, String description, String imageUri) {
+        this.itemId = itemId;
         this.name = name;
         this.description = description;
         this.imageUri = imageUri;
     }
 
     //getters and setters
+
+    public String getItemId() {
+        return itemId;
+    }
+
     public String getName() {
         return name;
     }
@@ -33,6 +39,10 @@ public class ItemModel {
 
     public String getImageUri() {
         return imageUri;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
     public void setName(String name) {
