@@ -43,7 +43,7 @@ import java.util.function.Consumer;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
-    ImageButton addBtn;
+    ImageButton addBtn, userAccount;
     private ImageListAdapter adapter;
     private ArrayList<ItemModel> itemList;
 
@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         addBtn = findViewById(R.id.addBtn);
+        userAccount = findViewById(R.id.account);
 
         //Initialize RecyclerView
         recyclerView = findViewById(R.id.recycler);
@@ -87,6 +88,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, NewItemPage.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        userAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AccountPage.class);
+                //add the intent.putExtra with the user informations
+
+
                 startActivity(intent);
                 finish();
             }

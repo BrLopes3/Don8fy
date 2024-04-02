@@ -3,6 +3,7 @@ package com.example.project_freestuff;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ public class DetailPage extends AppCompatActivity {
         String name = getIntent().getStringExtra("name");
         String description = getIntent().getStringExtra("description");
         String imageUri = getIntent().getStringExtra("url");
+        Log.d("imageUri", imageUri);
         String itemId = getIntent().getStringExtra("itemId");
 
         productName = findViewById(R.id.detailProductName);
@@ -78,7 +80,15 @@ public class DetailPage extends AppCompatActivity {
             public void onClick(View v) {
 
                 //delete the image from storage
-                StorageReference imageRef = storageRef.child(imageUri);
+                //use the download URL (imageUri) to create the full path for the image
+                String[] parts = imageUri.split("\\?")[0].split("%2F");
+                String imagePath = "";
+                for(int i=0; i<parts.length-1; i++){
+                    imagePath += parts[i]+"/";
+                }
+                imagePath = parts[parts.length-1];
+
+                StorageReference imageRef = storageRef.child(imagePath);
 
                 imageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
