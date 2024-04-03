@@ -18,15 +18,23 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginPage extends AppCompatActivity {
     Button btnLogIn, btnSignUp;
 
     EditText email, password;
     ImageButton btnEye;
+
+    String userName;
     boolean isPasswordVisible = false;
 
     private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +50,7 @@ public class LoginPage extends AppCompatActivity {
         //Retrieve email and password from the signup page
         Bundle extras = getIntent().getExtras();
         if (extras != null){
+            userName = extras.getString("name");
             String usermail = extras.getString("email");
             String userpassword = extras.getString("password");
 
@@ -96,10 +105,41 @@ public class LoginPage extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    Toast.makeText(LoginPage.this, "Login Successfull",Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginPage.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                    //search the user in the database
+                    FirebaseUser currentUser = mAuth.getCurrentUser();
+                    if(currentUser != null){
+                        String uid = currentUser.getUid();
+                        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+                        usersRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()){
+                                    String userName = snapshot.child("name").getValue(String.class);
+                                    String userPassword = snapshot.child("password").getValue(String.class);
+                                    String userEmail = snapshot.child("email").getValue(String.class);
+
+                                    Toast.makeText(LoginPage.this, "Login Successfull",Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(LoginPage.this, MainActivity.class);
+                                    intent.putExtra("name",userName);
+                                    intent.putExtra("password",userPassword);
+                                    intent.putExtra("email", userEmail);
+                                    startActivity(intent);
+                                    finish();
+                                }else{
+                                    Toast.makeText(LoginPage.this, "User data not found", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(LoginPage.this, "Database Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }else{
+                        Toast.makeText(LoginPage.this, "User Not Authenticated",Toast.LENGTH_SHORT).show();
+                    }
+
+
                 }else{
                     Toast.makeText(LoginPage.this, "Login Failed",Toast.LENGTH_SHORT).show();
                 }

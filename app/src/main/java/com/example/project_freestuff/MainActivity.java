@@ -47,11 +47,23 @@ public class MainActivity extends AppCompatActivity {
     private ImageListAdapter adapter;
     private ArrayList<ItemModel> itemList;
 
+    String userName, usermail, userpassword;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Retrieve user name, email and password from the login page
+        Bundle extras = getIntent().getExtras();
+        if (extras != null){
+            userName = extras.getString("name");
+            Toast.makeText(MainActivity.this, "Hello "+userName, Toast.LENGTH_LONG).show();
+            usermail = extras.getString("email");
+            userpassword = extras.getString("password");
+
+        }
 
         addBtn = findViewById(R.id.addBtn);
         userAccount = findViewById(R.id.account);
@@ -97,9 +109,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AccountPage.class);
-                //add the intent.putExtra with the user informations
-
-
+                intent.putExtra("name", userName);
+                intent.putExtra("email", usermail);
+                intent.putExtra("password", userpassword);
                 startActivity(intent);
                 finish();
             }

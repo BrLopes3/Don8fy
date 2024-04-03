@@ -15,10 +15,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUpPage extends AppCompatActivity {
 
@@ -44,6 +49,7 @@ public class SignUpPage extends AppCompatActivity {
         btneye2 = findViewById(R.id.eyebtn2);
 
         mAuth = FirebaseAuth.getInstance();
+
 
         txtname = findViewById(R.id.fullnametxt);
         txtemail = findViewById(R.id.emailtxt);
@@ -98,45 +104,64 @@ public class SignUpPage extends AppCompatActivity {
 
     }
     private void registerUser() {
-        String name = txtname.getText().toString().trim();
-        String email = txtemail.getText().toString().trim();
-        String password = txtpassword.getText().toString().trim();
-        String confirmPassword = txtconfirmpassword.getText().toString().trim();
+        String userName = txtname.getText().toString().trim();
+        String userEmail = txtemail.getText().toString().trim();
+        String userPassword = txtpassword.getText().toString().trim();
+        String userConfirmPassword = txtconfirmpassword.getText().toString().trim();
+
+        //Initialize Firebase RealTime Database
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("users");
 
 
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+        if (userName.isEmpty() || userEmail.isEmpty() || userPassword.isEmpty() || userConfirmPassword.isEmpty()) {
             Toast.makeText(this, "All the field should be filled!!", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (password.length() < 8) {
+        if (userPassword.length() < 8) {
             txtpassword.setError("Password should be more than 8 char");
             txtpassword.requestFocus();
             return;
         }
-        if (!password.equals(confirmPassword)) {
+        if (!userPassword.equals(userConfirmPassword)) {
             txtconfirmpassword.setError("Password and confirmation is not match");
             txtconfirmpassword.requestFocus();
             return;
         }
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(userEmail).matches()) {
             txtemail.setError("Please Put the valid Email address");
             txtemail.requestFocus();
             return;
         }
 
-        mAuth.createUserWithEmailAndPassword(email,password)
+        mAuth.createUserWithEmailAndPassword(userEmail,userPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
                             Toast.makeText(SignUpPage.this,
                                     "Register Success :) ", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(SignUpPage.this,LoginPage.class);
-                            intent.putExtra("email",email);
-                            intent.putExtra("password",password);
-                            startActivity(intent);
-                            finish();
+                            UserModel user = new UserModel(userName, userEmail, userPassword);
+                            FirebaseUser currentUser = mAuth.getCurrentUser();
+                            String userId = currentUser.getUid();
+                            //String userId = databaseRef.push().getKey();
+                            databaseRef.child(userId).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Intent intent = new Intent(SignUpPage.this,LoginPage.class);
+                                    intent.putExtra("name",user.name);
+                                    intent.putExtra("password",user.password);
+                                    intent.putExtra("email", user.email);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(SignUpPage.this, "Failed in save new User", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
                         }else{
                             Toast.makeText(SignUpPage.this, "Register Failed", Toast.LENGTH_SHORT).show();
                         }
