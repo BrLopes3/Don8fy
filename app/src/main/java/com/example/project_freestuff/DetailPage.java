@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.internal.Objects;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -43,7 +44,7 @@ public class DetailPage extends AppCompatActivity implements OnMapReadyCallback 
 
     //google maps
     private GoogleMap map;
-    private String positionMap;
+    public String positionMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,7 @@ public class DetailPage extends AppCompatActivity implements OnMapReadyCallback 
         String itemId = getIntent().getStringExtra("itemId");
         // Retrieve positionMap from intent
         positionMap = getIntent().getStringExtra("positionMap");
-
+        Toast.makeText(DetailPage.this, "Position: "+positionMap, Toast.LENGTH_SHORT).show();
         productName = findViewById(R.id.detailProductName);
         productDescription = findViewById(R.id.detailProductDescription);
         productImage = findViewById(R.id.imageProduct);

@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("description", item.description);
                 intent.putExtra("url", item.imageUri);
                 intent.putExtra("itemId", item.itemId);
+                intent.putExtra("positionMap", item.positionMap);
                 startActivity(intent);
                 finish();
             }
