@@ -255,10 +255,11 @@ public class NewItemPage extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         locationMap = googleMap;
+        float zoom = 12.0f;
 
         LatLng mapPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         locationMap.addMarker(new MarkerOptions().position(mapPosition).title("Object Location"));
-        locationMap.moveCamera(CameraUpdateFactory.newLatLng(mapPosition));
+        locationMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapPosition, zoom));
 
         itemPosition = Double.toString(mapPosition.latitude) + "," + Double.toString(mapPosition.longitude);
 

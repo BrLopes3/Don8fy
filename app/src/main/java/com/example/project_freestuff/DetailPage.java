@@ -158,18 +158,18 @@ public class DetailPage extends AppCompatActivity implements OnMapReadyCallback 
     public void onMapReady(@NonNull GoogleMap googleMap) {
 
         map = googleMap;
-        // Check if positionMap is not null
+
         if (positionMap != null) {
             Log.d("position", positionMap);
-            // Split positionMap string into latitude and longitude
+            float zoom = 12.0f;
             String[] latLng = positionMap.split(",");
             double latitude = Double.parseDouble(latLng[0]);
             double longitude = Double.parseDouble(latLng[1]);
-            // Add marker to the map
+
             LatLng location = new LatLng(latitude, longitude);
             map.addMarker(new MarkerOptions().position(location).title("Object Location"));
-            // Move camera to the marker position
-            map.moveCamera(CameraUpdateFactory.newLatLng(location));
+
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom));
         }
 
     }
