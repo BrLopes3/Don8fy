@@ -22,8 +22,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.android.gms.maps.SupportMapFragment;
 
-public class DetailPage extends AppCompatActivity {
+public class DetailPage extends AppCompatActivity{
 
     ImageView productImage;
     TextView productName;

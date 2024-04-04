@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.media.Image;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -31,14 +33,23 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
 
 import org.w3c.dom.Text;
@@ -46,12 +57,18 @@ import org.w3c.dom.Text;
 import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 
-public class NewItemPage extends AppCompatActivity {
+public class NewItemPage extends AppCompatActivity implements OnMapReadyCallback {
 
     ImageView productImage;
     EditText name, description;
     Button takePhoto, saveItem;
     Uri imageUri;
+
+    private final int FINE_PERMISSION_CODE = 1;
+    private GoogleMap locationMap;
+    Location currentLocation;
+    FusedLocationProviderClient fusedLocationProviderClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +81,15 @@ public class NewItemPage extends AppCompatActivity {
         takePhoto = findViewById(R.id.btnTakePhoto);
         saveItem = findViewById(R.id.btnSave);
 
+        //google maps
+        FrameLayout frameLayout = findViewById(R.id.maps);
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        getLastLocation();
+
 
         //request for camera runtime permission
-        if(ContextCompat.checkSelfPermission(NewItemPage.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(NewItemPage.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(NewItemPage.this, new String[]{
                     Manifest.permission.CAMERA
             }, 100);
@@ -89,6 +112,43 @@ public class NewItemPage extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void getLastLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_PERMISSION_CODE);
+
+            return;
+        }
+        Task<Location> task = fusedLocationProviderClient.getLastLocation();
+        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if(location != null){
+                    currentLocation = location;
+
+                    SupportMapFragment mapFragment = SupportMapFragment.newInstance();
+
+                    getSupportFragmentManager().beginTransaction().replace(R.id.maps, mapFragment).commit();
+
+                    mapFragment.getMapAsync(NewItemPage.this);
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(requestCode == FINE_PERMISSION_CODE){
+            if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                getLastLocation();
+            }else{
+                Toast.makeText(this, "Location permission is denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
@@ -179,5 +239,15 @@ public class NewItemPage extends AppCompatActivity {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Image", null);
         return Uri.parse(path);
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        locationMap = googleMap;
+
+        LatLng montreal = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        locationMap.addMarker(new MarkerOptions().position(montreal).title("Object Location"));
+        locationMap.moveCamera(CameraUpdateFactory.newLatLng(montreal));
+
     }
 }

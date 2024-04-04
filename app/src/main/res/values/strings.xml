@@ -2,4 +2,5 @@
     <string name="app_name">Don8fy</string>
     <string name="open">Open Navigation Drawer</string>
     <string name="close">Close Navigation Drawer</string>
+    <string name="map_api_key">AIzaSyBoStZHObh1_Zl8y4PT56HOYPoFsToqI7g</string>
 </resources>
