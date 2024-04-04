@@ -59,7 +59,7 @@
         <Button
             android:id="@+id/btnSave"
             android:layout_width="150dp"
-            android:layout_margin="20dp"
+            android:layout_margin="10dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/blue"
             android:textColor="@color/white"
@@ -71,7 +71,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/blue"
             android:textColor="@color/white"
-            android:layout_margin="20dp"
+            android:layout_margin="10dp"
             android:text="Cancel changes"/>
 
     </LinearLayout>

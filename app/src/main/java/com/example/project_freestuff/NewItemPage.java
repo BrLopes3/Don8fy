@@ -61,8 +61,9 @@ public class NewItemPage extends AppCompatActivity implements OnMapReadyCallback
 
     ImageView productImage;
     EditText name, description;
-    Button takePhoto, saveItem;
+    Button takePhoto, saveItem, back;
     Uri imageUri;
+    String itemPosition;
 
     private final int FINE_PERMISSION_CODE = 1;
     private GoogleMap locationMap;
@@ -80,6 +81,7 @@ public class NewItemPage extends AppCompatActivity implements OnMapReadyCallback
         description = findViewById(R.id.productDescription);
         takePhoto = findViewById(R.id.btnTakePhoto);
         saveItem = findViewById(R.id.btnSave);
+        back = findViewById(R.id.btnBack);
 
         //google maps
         FrameLayout frameLayout = findViewById(R.id.maps);
@@ -109,6 +111,15 @@ public class NewItemPage extends AppCompatActivity implements OnMapReadyCallback
                 //function to upload the image into the Firebase Storage
                 uploadImage(productImage);
 
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NewItemPage.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
 
@@ -188,7 +199,7 @@ public class NewItemPage extends AppCompatActivity implements OnMapReadyCallback
                         String itemName = name.getText().toString();
                         String itemDescription = description.getText().toString();
                         String uriImage = uri.toString();
-                        uploadItem(itemName, itemDescription, uriImage);
+                        uploadItem(itemName, itemDescription, uriImage, itemPosition);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -206,7 +217,7 @@ public class NewItemPage extends AppCompatActivity implements OnMapReadyCallback
 
     }
 
-    private void uploadItem(String name, String description, String imageUrl){
+    private void uploadItem(String name, String description, String imageUrl, String map){
 
         //Initialize Firebase RealTime Database
         DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("items");
@@ -215,7 +226,7 @@ public class NewItemPage extends AppCompatActivity implements OnMapReadyCallback
         String itemId = databaseRef.push().getKey(); //generate a unique ID for the item
         if (itemId != null){
             //instantiate the ItemModel class
-            ItemModel itemModel = new ItemModel(itemId, name, description, imageUrl);
+            ItemModel itemModel = new ItemModel(itemId, name, description, imageUrl, map);
             databaseRef.child(itemId).setValue(itemModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void unused) {
@@ -245,9 +256,12 @@ public class NewItemPage extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(@NonNull GoogleMap googleMap) {
         locationMap = googleMap;
 
-        LatLng montreal = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        locationMap.addMarker(new MarkerOptions().position(montreal).title("Object Location"));
-        locationMap.moveCamera(CameraUpdateFactory.newLatLng(montreal));
+        LatLng mapPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        locationMap.addMarker(new MarkerOptions().position(mapPosition).title("Object Location"));
+        locationMap.moveCamera(CameraUpdateFactory.newLatLng(mapPosition));
+
+        itemPosition = Double.toString(mapPosition.latitude) + "," + Double.toString(mapPosition.longitude);
+
 
     }
 }

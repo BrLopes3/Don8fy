@@ -16,6 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -24,17 +29,21 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.android.gms.maps.SupportMapFragment;
 
-public class DetailPage extends AppCompatActivity{
+public class DetailPage extends AppCompatActivity implements OnMapReadyCallback {
 
     ImageView productImage;
     TextView productName;
     TextView productDescription;
 
-    Button editItem, removeItem;
+    Button editItem, removeItem, back;
 
     //references from the Firebase
     private DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("items");
     private StorageReference storageRef = FirebaseStorage.getInstance().getReference("images/");
+
+    //google maps
+    private GoogleMap map;
+    private String positionMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +55,25 @@ public class DetailPage extends AppCompatActivity{
         String imageUri = getIntent().getStringExtra("url");
         Log.d("imageUri", imageUri);
         String itemId = getIntent().getStringExtra("itemId");
+        // Retrieve positionMap from intent
+        positionMap = getIntent().getStringExtra("positionMap");
 
         productName = findViewById(R.id.detailProductName);
         productDescription = findViewById(R.id.detailProductDescription);
         productImage = findViewById(R.id.imageProduct);
         editItem = findViewById(R.id.btnEdit);
         removeItem = findViewById(R.id.btnDelete);
+        back = findViewById(R.id.btnBack);
 
         productName.setText(name);
         productDescription.setText(description);
+
+        // Initialize the map
+        SupportMapFragment mapFragment = SupportMapFragment.newInstance();
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.maps, mapFragment).commit();
+
+        mapFragment.getMapAsync(DetailPage.this);
 
 
         Glide.with(DetailPage.this).load(imageUri).into(productImage);
@@ -123,7 +142,35 @@ public class DetailPage extends AppCompatActivity{
             }
         });
 
-
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailPage.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
 
     }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+
+        map = googleMap;
+        // Check if positionMap is not null
+        if (positionMap != null) {
+            Log.d("position", positionMap);
+            // Split positionMap string into latitude and longitude
+            String[] latLng = positionMap.split(",");
+            double latitude = Double.parseDouble(latLng[0]);
+            double longitude = Double.parseDouble(latLng[1]);
+            // Add marker to the map
+            LatLng location = new LatLng(latitude, longitude);
+            map.addMarker(new MarkerOptions().position(location).title("Object Location"));
+            // Move camera to the marker position
+            map.moveCamera(CameraUpdateFactory.newLatLng(location));
+        }
+
+    }
+
 }

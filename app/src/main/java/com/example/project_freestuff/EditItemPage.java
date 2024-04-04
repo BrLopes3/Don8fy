@@ -90,6 +90,7 @@ public class EditItemPage extends AppCompatActivity {
                     finish();
                 }else{
                     Toast.makeText(EditItemPage.this, "No changes to update", Toast.LENGTH_SHORT).show();
+
                 }
 
             }
@@ -100,6 +101,10 @@ public class EditItemPage extends AppCompatActivity {
             public void onClick(View v) {
                 name.setText(nameProduct);
                 description.setText(descriptionProduct);
+
+                Intent intent = new Intent(EditItemPage.this, MainActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
 
