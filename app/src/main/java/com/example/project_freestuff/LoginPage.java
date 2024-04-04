@@ -101,6 +101,8 @@ public class LoginPage extends AppCompatActivity {
             Toast.makeText(LoginPage.this, "all fields must be filled", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        //autentificação do firebase
         mAuth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {

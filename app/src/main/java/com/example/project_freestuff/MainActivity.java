@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,6 +30,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -107,15 +110,41 @@ public class MainActivity extends AppCompatActivity {
         });
 
         userAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AccountPage.class);
-                intent.putExtra("name", userName);
-                intent.putExtra("email", usermail);
-                intent.putExtra("password", userpassword);
-                startActivity(intent);
-                finish();
+
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                DatabaseReference userRef = database.getReference("users").child(mAuth.getCurrentUser().getUid());
+
+                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                           userName = dataSnapshot.child("name").getValue(String.class);
+                           usermail = dataSnapshot.child("email").getValue(String.class);
+                           userpassword = dataSnapshot.child("password").getValue(String.class);
+
+
+                            Intent intent = new Intent(MainActivity.this, AccountPage.class);
+                            intent.putExtra("name", userName);
+                            intent.putExtra("email", usermail);
+                            intent.putExtra("password", userpassword);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(MainActivity.this, "User data not found", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Toast.makeText(MainActivity.this, "Error when reading user data.", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
+
+
+
         });
     }
 
