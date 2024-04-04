@@ -30,7 +30,7 @@ public class AccountPage extends AppCompatActivity {
 
     TextView emailUser;
 
-    Button editUser, deleteUser;
+    Button editUser, deleteUser, back;
 
     // Firebase
     private FirebaseAuth mAuth;
@@ -50,6 +50,7 @@ public class AccountPage extends AppCompatActivity {
 
         editUser = findViewById(R.id.edit);
         deleteUser = findViewById(R.id.delete);
+        back = findViewById(R.id.btnBack);
 
 
         Bundle extras = getIntent().getExtras();
@@ -74,6 +75,15 @@ public class AccountPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deleteUserAccount();
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AccountPage.this, MainActivity.class);
+                startActivity(intent);
+
             }
         });
 
